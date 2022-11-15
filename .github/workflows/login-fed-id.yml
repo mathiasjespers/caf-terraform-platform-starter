@@ -2,6 +2,15 @@ name: level0-init-launchpad-stainfra
 
 on:
   workflow_dispatch:
+  
+env:
+  TF_CLI_ARGS: '-no-color'
+  TF_CLI_ARGS_destroy: '-refresh=false'
+  TF_REGISTRY_DISCOVERY_RETRY: 5
+  TF_REGISTRY_CLIENT_TIMEOUT: 15
+  ROVER_RUNNER: true
+  ENV: stainfra
+  GIT_LZ_BRANCH: 2203.1
 
 permissions:
   id-token: write
@@ -12,10 +21,23 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    
-    # Steps represent a sequence of tasks that will be executed as part of the job
+     
+          
+  bootstrap-plan:
+    name: bootrap-level0-plan
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: true
+      max-parallel: 1
+
+    container:
+      image: aztfmod/rover:1.3.1-2210.0303
+      options: --user 0
+
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       - name: OIDC Login to Azure Public Cloud with
         uses: azure/login@v1
@@ -24,3 +46,22 @@ jobs:
           enable-AzPSSession: false
           subscription-id: "${{ secrets.ARM_SUBSCRIPTION_ID }}"
           tenant-id: "${{ secrets.ARM_TENANT_ID }}"
+          echo "local user: $(whoami)"
+      - name: Bootstrap launchpad plan
+        run: |
+          git config --global --add safe.directory /__w/ttazetdinov/caf-terraform-platform-starter
+          id=$(az storage account list --query "[?tags.caf_tfstate == 'level0' && tags.caf_environment == '${{ env.ENV }}']" -o json | jq -r '.[0].name')
+          echo "Storage account: $id"
+          if [ "${id}" = "null" ]; then
+            /tf/rover/rover.sh -lz ${GITHUB_WORKSPACE}/landingzones/caf_launchpad \
+              -var-folder ${GITHUB_WORKSPACE}/configuration/landingzones/stainfra/level0/launchpad \
+              -level level0 \
+              -launchpad \
+              -parallelism=30 \
+              -env ${{ env.ENV }} \
+              -tfstate caf_launchpad.tfstate \
+              -tfstate_subscription_id ${{ env.ARM_SUBSCRIPTION_ID }} \
+              -a plan
+          else
+            echo "Storage account name : ${id} found. Not launching bootstrap"
+          fi
