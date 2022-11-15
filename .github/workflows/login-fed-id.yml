@@ -43,10 +43,8 @@ jobs:
           tenant-id: "${{ secrets.ARM_TENANT_ID }}"
       - name: Bootstrap launchpad plan
         run: |
-          git config --global --add safe.directory /__w/caf-terraform-landingzones-platform-starter/caf-terraform-landingzones-platform-starter
+          git config --global --add safe.directory /__w/caf-terraform-platform-starter/caf-terraform-platform-starter
           id=$(az storage account list --query "[?tags.caf_tfstate == 'level0' && tags.caf_environment == '${{ env.ENV }}']" -o json | jq -r '.[0].name')
-          pwd
-          ls -a
           echo "Storage account: $id"
           if [ "${id}" = "null" ]; then
             /tf/rover/rover.sh -lz ${GITHUB_WORKSPACE}/landingzones/caf_launchpad \
