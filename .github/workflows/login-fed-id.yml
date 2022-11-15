@@ -1,0 +1,22 @@
+name: level0-init-launchpad-stainfra
+
+on:
+  workflow_dispatch:
+
+jobs:
+ # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      - name: OIDC Login to Azure Public Cloud with
+        uses: azure/login@v1
+        with: 
+          client-id: "${{ secrets.ARM_CLIENT_ID }}"
+          enable-AzPSSession: false
+          subscription-id: "${{ secrets.ARM_SUBSCRIPTION_ID }}"
+          tenant-id: "${{ secrets.ARM_TENANT_ID }}"
