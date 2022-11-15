@@ -11,6 +11,12 @@ env:
   ROVER_RUNNER: true
   ENV: stainfra
   GIT_LZ_BRANCH: 2203.1
+  ARM_CLIENT_ID: "${{ secrets.ARM_CLIENT_ID }}"
+  ARM_TENANT_ID: "${{ secrets.ARM_TENANT_ID }}"
+  AZURE_CLIENT_ID: "${{ secrets.ARM_CLIENT_ID }}"
+  AZURE_TENANT_ID: "${{ secrets.ARM_TENANT_ID }}"
+  ARM_SUBSCRIPTION_ID: "${{ secrets.ARM_SUBSCRIPTION_ID }}"
+  AZURE_SUBSCRIPTION_ID: "${{ secrets.ARM_SUBSCRIPTION_ID }}"
 
 permissions:
   id-token: write
