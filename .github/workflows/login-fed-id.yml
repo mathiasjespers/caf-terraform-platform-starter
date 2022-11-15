@@ -17,21 +17,15 @@ permissions:
   contents: read
 
 jobs:
- # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
-     
-          
   bootstrap-plan:
     name: bootrap-level0-plan
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest          
 
     strategy:
       matrix:         
        os: [ubuntu-latest]
       fail-fast: true
-      max-parallel: 1
+      max-parallel: 50
 
     container:
       image: aztfmod/rover:1.3.1-2210.0303
@@ -47,7 +41,7 @@ jobs:
           enable-AzPSSession: false
           subscription-id: "${{ secrets.ARM_SUBSCRIPTION_ID }}"
           tenant-id: "${{ secrets.ARM_TENANT_ID }}"
-          # echo "local user: $(whoami)"
+          echo "local user: $(whoami)"
       - name: Bootstrap launchpad plan
         run: |
           git config --global --add safe.directory /__w/ttazetdinov/caf-terraform-platform-starter
