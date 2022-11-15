@@ -44,7 +44,7 @@ jobs:
           echo "local user: $(whoami)"
       - name: Bootstrap launchpad plan
         run: |
-          git config --global --add safe.directory /__w/ttazetdinov
+          git config --global --add safe.directory /__w/caf-terraform-landingzones-platform-starter/caf-terraform-landingzones-platform-starter
           id=$(az storage account list --query "[?tags.caf_tfstate == 'level0' && tags.caf_environment == '${{ env.ENV }}']" -o json | jq -r '.[0].name')
           echo "Storage account: $id"
           if [ "${id}" = "null" ]; then
