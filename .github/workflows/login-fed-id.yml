@@ -28,6 +28,8 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+      matrix:         
+       os: [ubuntu-latest]
       fail-fast: true
       max-parallel: 1
 
@@ -38,7 +40,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
       - name: OIDC Login to Azure Public Cloud with
         uses: azure/login@v1
         with: 
@@ -46,7 +47,7 @@ jobs:
           enable-AzPSSession: false
           subscription-id: "${{ secrets.ARM_SUBSCRIPTION_ID }}"
           tenant-id: "${{ secrets.ARM_TENANT_ID }}"
-          echo "local user: $(whoami)"
+          # echo "local user: $(whoami)"
       - name: Bootstrap launchpad plan
         run: |
           git config --global --add safe.directory /__w/ttazetdinov/caf-terraform-platform-starter
